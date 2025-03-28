@@ -10,6 +10,8 @@ export default function SolutionDataCard({ page }: { page: Pages }) {
       <Card className="h-full !py-3">
         <div className="text-lg font-medium">Strong Acid</div>
 
+        {page}
+
         <InputField
           value={test}
           setValue={setTest}
