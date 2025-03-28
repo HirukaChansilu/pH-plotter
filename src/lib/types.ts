@@ -1,3 +1,5 @@
+export type Pages = "flask" | "burette";
+
 export interface Acid {
   label: string;
   pKa?: number;
@@ -20,7 +22,7 @@ export interface Flask {
   volume: number;
 }
 
-export interface Biuret {
+export interface Burette {
   type: "acid" | "base";
   content: Acid | Base;
   volume: number;
