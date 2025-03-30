@@ -2,7 +2,7 @@ export type Pages = "flask" | "burette";
 
 export interface Acid {
   label: string;
-  pKa?: number;
+  Ka?: number;
   concentration: number;
   basicity: number;
   volume: number;
@@ -10,7 +10,7 @@ export interface Acid {
 
 export interface Base {
   label: string;
-  pKb?: number;
+  Kb?: number;
   concentration: number;
   acidity: number;
   volume: number;

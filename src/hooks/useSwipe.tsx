@@ -1,46 +1,77 @@
-import { RefObject, TouchEvent, useEffect, useState } from "react";
+import { RefObject, TouchEvent, useEffect, useState, useCallback } from "react";
 
 export function useSwipe({
   element,
+  direction,
   onLeft,
   onRight,
+  onUp,
+  onDown,
 }: {
   element: RefObject<HTMLDivElement | null>;
-  onLeft: () => void;
-  onRight: () => void;
+  direction: "horizontal" | "vertical";
+  onLeft?: () => void;
+  onRight?: () => void;
+  onUp?: () => void;
+  onDown?: () => void;
 }) {
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(
+    null
+  );
+  const [touchEnd, setTouchEnd] = useState<{ x: number; y: number } | null>(
+    null
+  );
+
+  const minSwipeDistance = 30;
+
+  const onTouchStart = useCallback((e: unknown) => {
+    setTouchEnd(null);
+    setTouchStart({
+      x: (e as TouchEvent).targetTouches[0].clientX,
+      y: (e as TouchEvent).targetTouches[0].clientY,
+    });
+  }, []);
+
+  const onTouchMove = useCallback((e: unknown) => {
+    setTouchEnd({
+      x: (e as TouchEvent).targetTouches[0].clientX,
+      y: (e as TouchEvent).targetTouches[0].clientY,
+    });
+  }, []);
+
+  const onTouchEnd = useCallback(() => {
+    if (!touchStart || !touchEnd) return;
+
+    const deltaX = touchStart.x - touchEnd.x;
+    const deltaY = touchStart.y - touchEnd.y;
+
+    if (direction === "horizontal") {
+      if (Math.abs(deltaX) > minSwipeDistance) {
+        if (deltaX > 0 && onLeft) onLeft();
+        if (deltaX < 0 && onRight) onRight();
+      }
+    } else if (direction === "vertical") {
+      if (Math.abs(deltaY) > minSwipeDistance) {
+        if (deltaY > 0 && onUp) onUp();
+        if (deltaY < 0 && onDown) onDown();
+      }
+    }
+  }, [touchStart, touchEnd, direction, onLeft, onRight, onUp, onDown]);
 
   useEffect(() => {
     const el = element.current;
     if (!el) return;
 
-    const minSwipeDistance = 30;
+    el.addEventListener("touchstart", onTouchStart as EventListener);
+    el.addEventListener("touchmove", onTouchMove as EventListener);
+    el.addEventListener("touchend", onTouchEnd as EventListener);
 
-    const onTouchStart = (e: unknown) => {
-      setTouchEnd(null);
-      setTouchStart((e as TouchEvent).targetTouches[0].clientX);
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart as EventListener);
+      el.removeEventListener("touchmove", onTouchMove as EventListener);
+      el.removeEventListener("touchend", onTouchEnd as EventListener);
     };
+  }, [element, onTouchStart, onTouchMove, onTouchEnd]);
 
-    const onTouchMove = (e: unknown) =>
-      setTouchEnd((e as TouchEvent).targetTouches[0].clientX);
-
-    const onTouchEnd = () => {
-      if (!touchStart || !touchEnd) return;
-      const distance = touchStart - touchEnd;
-      const isLeftSwipe = distance > minSwipeDistance;
-      const isRightSwipe = distance < -minSwipeDistance;
-
-      if (isLeftSwipe) {
-        onLeft();
-      } else if (isRightSwipe) {
-        onRight();
-      }
-    };
-
-    el.addEventListener("touchstart", onTouchStart);
-    el.addEventListener("touchmove", onTouchMove);
-    el.addEventListener("touchend", onTouchEnd);
-  }, [element, onLeft, onRight, touchEnd, touchStart]);
+  return null;
 }

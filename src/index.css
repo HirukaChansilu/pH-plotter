@@ -47,3 +47,27 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
+
+.plot svg {
+  height: 100%;
+  width: auto;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #ffffff3a transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #ffffff3a;
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: transparent;
+}

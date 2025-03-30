@@ -8,7 +8,7 @@ export function SelectionCard({ page }: { page: Pages }) {
   const [value, setValue] = useState<string | null>(null);
 
   return (
-    <div className="px-5">
+    <div className="px-5 w-full">
       <Card className="w-full !py-3 flex flex-col gap-3 !pb-4">
         <div>
           <h2 className="text-xl font-semibold">
@@ -55,6 +55,7 @@ export default function SelectionCardContainer({
 
   useSwipe({
     element: touchRef,
+    direction: "horizontal",
     onLeft: () => {
       if (page === "flask") {
         setPage("burette");
