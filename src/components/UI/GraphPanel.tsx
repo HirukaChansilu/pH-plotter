@@ -7,9 +7,11 @@ import { calculatePHStrongAcidStrongBase } from "../../lib/calc/StrongAcidStrong
 export default function GraphPanel({
   showGraph,
   setShowGraph,
+  disableSlide = false,
 }: {
   showGraph: boolean;
   setShowGraph: Dispatch<SetStateAction<boolean>>;
+  disableSlide?: boolean;
 }) {
   const swipeRef = useRef<HTMLDivElement>(null);
 
@@ -47,26 +49,28 @@ export default function GraphPanel({
 
   return (
     <div
-      className={`fixed bottom-0 right-0 left-0 h-full w-full flex flex-col justify-end items-center ${
-        showGraph ? "pointer-events-auto" : "pointer-events-none"
+      className={`fixed bottom-0 right-0 left-0 h-full w-full flex flex-col justify-end items-center xl:relative ${
+        showGraph || disableSlide
+          ? "pointer-events-auto"
+          : "pointer-events-none"
       }`}
       onClick={() => {
-        setShowGraph(false);
+        if (!disableSlide) setShowGraph(false);
       }}
     >
       <Card
-        className="w-full h-11/12 !py-0 !pb-3 !px-3 rounded-b-none rounded-t-2xl flex flex-col transition-transform duration-500 ease-in-out"
+        className="w-full h-11/12 !py-0 !pb-3 !px-3 rounded-b-none xl:rounded-b-2xl rounded-t-2xl flex flex-col transition-transform duration-500 ease-in-out"
         onClick={(e) => {
           e.stopPropagation();
         }}
         style={{
-          transform: `translateY(${showGraph ? "0" : "100%"})`,
+          transform: `translateY(${showGraph || disableSlide ? "0" : "100%"})`,
         }}
       >
-        <div className="w-8 h-1 bg-white/40 rounded-full relative mx-auto my-3" />
+        <div className="w-8 h-1 bg-white/40 rounded-full relative mx-auto my-3 xl:hidden" />
 
         <div
-          className="w-full flex gap-[0.3rem] h-fit relative mb-3"
+          className="w-full flex gap-[0.4rem] h-fit relative mb-3 xl:mt-3 xl:gap-3"
           ref={swipeRef}
         >
           <Card className="w-full h-full !py-2 !px-2 !rounded-lg">

@@ -8,7 +8,7 @@ export function SelectionCard({ page }: { page: Pages }) {
   const [value, setValue] = useState<string | null>(null);
 
   return (
-    <div className="px-5 w-full">
+    <div className="px-5 md:px-0 xl:px-5 w-full">
       <Card className="w-full !py-3 flex flex-col gap-3 !pb-4">
         <div>
           <h2 className="text-xl font-semibold">
@@ -69,7 +69,10 @@ export default function SelectionCardContainer({
   });
 
   return (
-    <div className="w-full relative overflow-hidden" ref={touchRef}>
+    <div
+      className="w-full relative overflow-hidden md:hidden xl:block"
+      ref={touchRef}
+    >
       <div
         className="flex w-[calc(200%-4px)] transition-transform duration-500 ease-in-out"
         style={{
