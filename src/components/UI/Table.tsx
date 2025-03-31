@@ -2,7 +2,7 @@ import Card from "./Card";
 
 export default function Table({ data }: { data: number[][] }) {
   return (
-    <Card className="overflow-y-scroll w-full h-32 lg:w-32 lg:h-fit">
+    <Card className="overflow-y-scroll h-32 w-full lg:w-32 lg:h-full">
       <div className="absolute top-0 right-0 left-0 w-full p-1">
         <table className="w-full">
           <thead>

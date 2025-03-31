@@ -20,6 +20,22 @@ export default function PlotElement({ data, ...props }: PlotElementProps) {
       ],
       width: 1000,
       height: 500,
+      style: {
+        fontFamily: "Satoshi, Arial, sans-serif",
+      },
+      x: {
+        label: "Volume (cm³)",
+        labelAnchor: "center",
+        labelOffset: 35,
+        line: true,
+      },
+      y: {
+        label: "pH",
+        labelAnchor: "center",
+        labelOffset: 35,
+        line: true,
+      },
+      grid: true,
     });
 
     (containerRef.current as HTMLDivElement).append(plotLocal);
