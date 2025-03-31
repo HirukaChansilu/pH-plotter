@@ -1,11 +1,41 @@
-import { Dispatch, SetStateAction, useRef, useState } from "react";
-import { Pages } from "../../lib/types";
-import Card from "../UI/Card";
-import Dropdown from "../UI/Dropdown";
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
+import { SolutionContext } from "../../context/SolutionContext";
 import { useSwipe } from "../../hooks/useSwipe";
 
+import { Pages, Solutions } from "../../lib/types";
+
+import Card from "../UI/Card";
+import Dropdown from "../UI/Dropdown";
+
 export function SelectionCard({ page }: { page: Pages }) {
-  const [value, setValue] = useState<string | null>(null);
+  const solutionContext = useContext(SolutionContext);
+
+  const [value, setValue] = useState<Solutions | null>(
+    page === "flask" ? solutionContext.flask.type : solutionContext.burette.type
+  );
+
+  useEffect(() => {
+    if (!value) return;
+
+    if (page === "flask") {
+      solutionContext.setFlask({
+        type: value,
+      });
+    } else if (page === "burette") {
+      solutionContext.setBurette({
+        type: value,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, value]);
 
   return (
     <div className="px-5 md:px-0 xl:px-5 w-full">
@@ -24,17 +54,26 @@ export function SelectionCard({ page }: { page: Pages }) {
           </p>
         </div>
 
-        <Dropdown
+        <Dropdown<Solutions | null>
           value={value}
           setValue={setValue}
           options={[
             {
-              label: "Acid",
-              value: "acid",
+              label: "Strong Acid",
+              value: "strong-acid",
             },
             {
-              label: "Base",
-              value: "base",
+              label: "Weak Acid",
+              value: "weak-acid",
+              disabled: true,
+            },
+            {
+              label: "Strong Base",
+              value: "strong-base",
+            },
+            {
+              label: "Weak Base",
+              value: "weak-base",
               disabled: true,
             },
           ]}

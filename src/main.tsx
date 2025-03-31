@@ -1,13 +1,20 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import "./index.css";
-import "./fonts.css";
+import { SettingsProvider } from "./context/SettingsContext.tsx";
+import { SolutionProvider } from "./context/SolutionContext.tsx";
 
 import App from "./App.tsx";
 
+import "./index.css";
+import "./fonts.css";
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <SettingsProvider>
+      <SolutionProvider>
+        <App />
+      </SolutionProvider>
+    </SettingsProvider>
   </StrictMode>
 );

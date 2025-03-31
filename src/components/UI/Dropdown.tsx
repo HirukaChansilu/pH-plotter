@@ -1,12 +1,12 @@
 import { Dispatch, SetStateAction } from "react";
 
-export default function Dropdown({
+export default function Dropdown<T>({
   value,
   setValue,
   options,
 }: {
-  value: string | null;
-  setValue: Dispatch<SetStateAction<string | null>>;
+  value: T;
+  setValue: Dispatch<SetStateAction<T>>;
   options: {
     label: string;
     value: string;
@@ -15,8 +15,8 @@ export default function Dropdown({
 }) {
   return (
     <select
-      value={value || ""}
-      onChange={(e) => setValue(e.target.value)}
+      value={(value as string) || ""}
+      onChange={(e) => setValue(e.target.value as T)}
       className="w-full h-8 py-1 px-2 rounded-lg bg-white/[0.05] backdrop-blur-xl border-[2px] border-white/5 focus:outline-none focus:border-cyan-900 text-sm text-white/60"
     >
       <option value="" disabled hidden>
