@@ -1,8 +1,27 @@
-import { Dispatch, SetStateAction, useRef } from "react";
-import Card from "./Card";
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
+import { SolutionContext } from "../../context/SolutionContext";
+import { SettingsContext } from "../../context/SettingsContext";
 import { useSwipe } from "../../hooks/useSwipe";
+
+import {
+  getGraphData,
+  getSolutionStrength,
+  getSolutionType,
+  getSolutionTypeName,
+} from "../../lib/func";
+import { Acid, Base } from "../../lib/types";
+
+import Card from "./Card";
 import PlotElement from "./PlotElement";
-import { calculatePHStrongAcidStrongBase } from "../../lib/calc/StrongAcidStrongBase";
+import Table from "./Table";
 
 export default function GraphPanel({
   showGraph,
@@ -13,7 +32,22 @@ export default function GraphPanel({
   setShowGraph: Dispatch<SetStateAction<boolean>>;
   disableSlide?: boolean;
 }) {
+  const solutionContext = useContext(SolutionContext);
+  const settingsContext = useContext(SettingsContext);
+
   const swipeRef = useRef<HTMLDivElement>(null);
+
+  const [data, setData] = useState<number[][]>([]);
+
+  useEffect(() => {
+    setData(
+      getGraphData(
+        solutionContext.flask,
+        solutionContext.burette,
+        settingsContext.settings.kw
+      ) || []
+    );
+  }, [solutionContext, settingsContext]);
 
   useSwipe({
     element: swipeRef,
@@ -22,30 +56,6 @@ export default function GraphPanel({
       setShowGraph(false);
     },
   });
-
-  const data = [
-    0, 5, 10, 12.5, 15, 17.5, 20, 24, 24.9, 24.95, 24.99, 25, 25.01, 25.05,
-    25.1, 26, 30, 35, 37.5, 40, 50,
-  ];
-
-  const acid = {
-    label: "HCl",
-    concentration: 1,
-    basicity: 1,
-    volume: 25 / 1000,
-  };
-
-  const base = {
-    label: "NaOH",
-    concentration: 1,
-    acidity: 1,
-    volume: 0,
-  };
-
-  const plotData = data.map((d) => [
-    d,
-    calculatePHStrongAcidStrongBase(acid, { ...base, volume: d / 1000 }, 1e-14),
-  ]);
 
   return (
     <div
@@ -70,22 +80,38 @@ export default function GraphPanel({
         <div className="w-8 h-1 bg-white/40 rounded-full relative mx-auto my-3 xl:hidden" />
 
         <div
-          className="w-full flex gap-[0.4rem] h-fit relative mb-3 xl:mt-3 xl:gap-3"
+          className="w-full flex gap-[0.4rem] h-fit relative mb-[0.4rem] xl:mt-3 xl:gap-3 xl:mb-3"
           ref={swipeRef}
         >
           <Card className="w-full h-full !py-2 !px-2 !rounded-lg">
             <div className="w-full flex justify-between items-center">
               <div className="">
-                <div className="text-sm font-medium leading-[1.1]">HCl</div>
+                <div className="text-sm font-medium leading-[1.1]">
+                  {solutionContext.flask.content?.label || "-"}
+                </div>
               </div>
               <div className="text-xs text-white/80">Flask</div>
             </div>
 
             <div className="flex justify-between items-center">
-              <div className="text-[0.7rem] text-white/60">Strong Acid</div>
+              <div className="text-[0.7rem] text-white/60">
+                {getSolutionTypeName(solutionContext.flask.type)}
+              </div>
               <div className="text-[0.7rem]">
-                <span className="text-white/60">{"Basicity = "}</span>
-                <span className="text-white/80 font-medium">1</span>
+                <span className="text-white/60">
+                  {getSolutionType(solutionContext.flask.type) === "acid"
+                    ? "Basicity = "
+                    : getSolutionType(solutionContext.flask.type) === "base"
+                    ? "Acidity = "
+                    : "-"}
+                </span>
+                <span className="text-white/80 font-medium">
+                  {getSolutionType(solutionContext.flask.type) === "acid"
+                    ? (solutionContext.flask.content as Acid)?.basicity || "-"
+                    : getSolutionType(solutionContext.flask.type) === "base"
+                    ? (solutionContext.flask.content as Base)?.acidity || "-"
+                    : ""}
+                </span>
               </div>
             </div>
 
@@ -94,7 +120,7 @@ export default function GraphPanel({
             <div className="text-[0.7rem] leading-[1.2]">
               <span className="text-white/60">{"c = "}</span>
               <span className="text-white/80 font-medium">
-                {0.00004}
+                {solutionContext.flask.content?.concentration || "-"}
                 <span className="text-[0.65rem]">
                   &nbsp;mol&nbsp;dm
                   <span className="sup !text-[0.5rem]">-3</span>
@@ -105,40 +131,67 @@ export default function GraphPanel({
             <div className="text-[0.7rem] leading-[1.2]">
               <span className="text-white/60">{"v = "}</span>
               <span className="text-white/80 font-medium">
-                {25}
+                {solutionContext.flask.volume || "-"}
                 <span className="text-[0.65rem]">&nbsp;cm</span>
                 <span className="sup !text-[0.5rem]">3</span>
               </span>
             </div>
 
-            <div className="text-[0.7rem] leading-[1.2]">
-              <span className="text-white/60">
-                k<span className="sub !text-[0.6rem]">a</span>
-                {" = "}
-              </span>
-              <span className="text-white/80 font-medium">
-                {4}
-                <span className="text-[0.65rem]">
-                  &nbsp;mol&nbsp;dm
-                  <span className="sup !text-[0.5rem]">-3</span>
+            {getSolutionStrength(solutionContext.flask.type) === "weak" && (
+              <div className="text-[0.7rem] leading-[1.2]">
+                <span className="text-white/60">
+                  k
+                  <span className="sub !text-[0.6rem]">
+                    {getSolutionType(solutionContext.flask.type) === "acid"
+                      ? "a"
+                      : "b"}
+                  </span>
+                  {" = "}
                 </span>
-              </span>
-            </div>
+                <span className="text-white/80 font-medium">
+                  {getSolutionType(solutionContext.flask.type) === "acid"
+                    ? (solutionContext.flask.content as Acid)?.Ka || "-"
+                    : getSolutionType(solutionContext.flask.type) === "base"
+                    ? (solutionContext.flask.content as Base)?.Kb || "-"
+                    : "-"}
+                  <span className="text-[0.65rem]">
+                    &nbsp;mol&nbsp;dm
+                    <span className="sup !text-[0.5rem]">-3</span>
+                  </span>
+                </span>
+              </div>
+            )}
           </Card>
 
           <Card className="w-full h-full !py-2 !px-2 !rounded-lg">
             <div className="w-full flex justify-between items-center">
               <div className="">
-                <div className="text-sm font-medium leading-[1.1]">NaOH</div>
+                <div className="text-sm font-medium leading-[1.1]">
+                  {solutionContext.burette.content?.label || "-"}
+                </div>
               </div>
               <div className="text-xs text-white/80">Burette</div>
             </div>
 
             <div className="flex justify-between items-center">
-              <div className="text-[0.7rem] text-white/60">Strong Base</div>
+              <div className="text-[0.7rem] text-white/60">
+                {getSolutionTypeName(solutionContext.burette.type)}
+              </div>
               <div className="text-[0.7rem]">
-                <span className="text-white/60">{"Acidity = "}</span>
-                <span className="text-white/80 font-medium">1</span>
+                <span className="text-white/60">
+                  {getSolutionType(solutionContext.burette.type) === "acid"
+                    ? "Basicity = "
+                    : getSolutionType(solutionContext.burette.type) === "base"
+                    ? "Acidity = "
+                    : "-"}
+                </span>
+                <span className="text-white/80 font-medium">
+                  {getSolutionType(solutionContext.burette.type) === "acid"
+                    ? (solutionContext.burette.content as Acid)?.basicity || "-"
+                    : getSolutionType(solutionContext.burette.type) === "base"
+                    ? (solutionContext.burette.content as Base)?.acidity || "-"
+                    : ""}
+                </span>
               </div>
             </div>
 
@@ -147,7 +200,7 @@ export default function GraphPanel({
             <div className="text-[0.7rem] leading-[1.2]">
               <span className="text-white/60">{"c = "}</span>
               <span className="text-white/80 font-medium">
-                {0.00004}
+                {solutionContext.burette.content?.concentration || "-"}
                 <span className="text-[0.65rem]">
                   &nbsp;mol&nbsp;dm
                   <span className="sup !text-[0.5rem]">-3</span>
@@ -155,36 +208,41 @@ export default function GraphPanel({
               </span>
             </div>
 
-            <div className="text-[0.7rem] leading-[1.2]">
-              <span className="text-white/60">{"v = "}</span>
-              <span className="text-white/80 font-medium">
-                {25}
-                <span className="text-[0.65rem]">&nbsp;cm</span>
-                <span className="sup !text-[0.5rem]">3</span>
-              </span>
-            </div>
-
-            <div className="text-[0.7rem] leading-[1.2]">
-              <span className="text-white/60">
-                k<span className="sub !text-[0.6rem]">b</span>
-                {" = "}
-              </span>
-              <span className="text-white/80 font-medium">
-                {4}
-                <span className="text-[0.65rem]">
-                  &nbsp;mol&nbsp;dm
-                  <span className="sup !text-[0.5rem]">-3</span>
+            {getSolutionStrength(solutionContext.burette.type) === "weak" && (
+              <div className="text-[0.7rem] leading-[1.2]">
+                <span className="text-white/60">
+                  k
+                  <span className="sub !text-[0.6rem]">
+                    {getSolutionType(solutionContext.burette.type) === "acid"
+                      ? "a"
+                      : "b"}
+                  </span>
+                  {" = "}
                 </span>
-              </span>
-            </div>
+                <span className="text-white/80 font-medium">
+                  {getSolutionType(solutionContext.burette.type) === "acid"
+                    ? (solutionContext.burette.content as Acid)?.Ka || "-"
+                    : getSolutionType(solutionContext.burette.type) === "base"
+                    ? (solutionContext.burette.content as Base)?.Kb || "-"
+                    : "-"}
+                  <span className="text-[0.65rem]">
+                    &nbsp;mol&nbsp;dm
+                    <span className="sup !text-[0.5rem]">-3</span>
+                  </span>
+                </span>
+              </div>
+            )}
           </Card>
         </div>
 
-        <div className="w-full h-full relative overflow-x-scroll">
-          <PlotElement
-            data={plotData}
-            className="absolute top-0 bottom-0 left-0 h-full aspect-[2/1]"
-          />
+        <div className="w-full h-full flex flex-col lg:flex-row gap-1">
+          <Table data={data} />
+          <div className="w-full h-full relative overflow-x-scroll flex gap-1 items-start justify-start">
+            <PlotElement
+              data={data}
+              className="absolute top-0 bottom-0 left-0 h-full aspect-[2/1]"
+            />
+          </div>
         </div>
       </Card>
     </div>

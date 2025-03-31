@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import Menu from "./components/UI/Menu";
-
 import { Pages } from "./lib/types";
+
+import Menu from "./components/UI/Menu";
 import SelectionCardContainer, {
   SelectionCard,
 } from "./components/Cards/SelectionCard";

@@ -1,7 +1,8 @@
 import { Dispatch, SetStateAction } from "react";
 
-import Card from "./Card";
 import { Pages } from "../../lib/types";
+
+import Card from "./Card";
 
 export default function Menu({
   page,
