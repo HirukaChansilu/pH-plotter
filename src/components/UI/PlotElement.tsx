@@ -25,14 +25,14 @@ export default function PlotElement({ data, ...props }: PlotElementProps) {
       },
       x: {
         label: "Volume (cm³)",
-        labelAnchor: "center",
-        labelOffset: 35,
+        labelAnchor: "right",
+        labelOffset: 25,
         line: true,
       },
       y: {
         label: "pH",
-        labelAnchor: "center",
-        labelOffset: 35,
+        labelAnchor: "top",
+        labelOffset: 25,
         line: true,
       },
       grid: true,
