@@ -12,6 +12,7 @@ export function calculatePHStrongAcidWeakBase(
   const totalVolume = acid.volume + base.volume;
 
   let pH = 0;
+  const pKW = -Math.log10(kw);
 
   // Check if the limiting reagent is the acid
   if ((baseMoles * base.acidity) / acid.basicity > acidMoles) {
@@ -21,8 +22,6 @@ export function calculatePHStrongAcidWeakBase(
 
     const excessBaseConcentration = excessBaseMoles / totalVolume;
     const generatedSaltConcentration = generatedSaltMoles / totalVolume;
-
-    const pKW = -Math.log10(kw);
 
     // No acid added (no salt generated)
     if (acidMoles === 0) {
@@ -63,8 +62,6 @@ export function calculatePHStrongAcidWeakBase(
     const generatedSaltMoles = (acidMoles * acid.basicity) / base.acidity;
 
     const generatedSaltConcentration = generatedSaltMoles / totalVolume;
-
-    const pKW = -Math.log10(kw);
 
     pH =
       (pKW -
