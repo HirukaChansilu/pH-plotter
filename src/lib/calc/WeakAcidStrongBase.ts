@@ -26,13 +26,13 @@ export function calculatePHWeakAcidStrongBase(
     // No base added (no salt generated)
     if (baseMoles === 0) {
       pH = -Math.log10(
-        Math.sqrt((acid.Ka ? acid.Ka : 0.00002) * excessAcidConcentration)
+        Math.sqrt((acid.Ka ? acid.Ka : 0) * excessAcidConcentration)
       );
     }
     // Acid added
     else {
       pH = -Math.log10(
-        ((acid.Ka ? acid.Ka : 0.00002) * excessAcidConcentration) /
+        ((acid.Ka ? acid.Ka : 0) * excessAcidConcentration) /
           generatedSaltConcentration
       );
     }
@@ -62,7 +62,7 @@ export function calculatePHWeakAcidStrongBase(
 
     pH =
       (pKW -
-        Math.log10(acid.Ka ? acid.Ka : 0.00002) +
+        Math.log10(acid.Ka ? acid.Ka : 0) +
         Math.log10(generatedSaltConcentration)) /
       2;
   }
