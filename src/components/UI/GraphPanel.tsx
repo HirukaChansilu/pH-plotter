@@ -87,7 +87,9 @@ export default function GraphPanel({
             <div className="w-full flex justify-between items-center">
               <div className="">
                 <div className="text-sm font-medium leading-[1.1]">
-                  {solutionContext.flask.content?.label || "-"}
+                  {solutionContext.flask.type === "water"
+                    ? "Water"
+                    : solutionContext.flask.content?.label || "-"}
                 </div>
               </div>
               <div className="text-xs text-white/80">Flask</div>
@@ -95,11 +97,15 @@ export default function GraphPanel({
 
             <div className="flex justify-between items-center">
               <div className="text-[0.7rem] text-white/60">
-                {getSolutionTypeName(solutionContext.flask.type)}
+                {solutionContext.flask.type === "water"
+                  ? "H₂O"
+                  : getSolutionTypeName(solutionContext.flask.type)}
               </div>
               <div className="text-[0.7rem]">
                 <span className="text-white/60">
-                  {getSolutionType(solutionContext.flask.type) === "acid"
+                  {solutionContext.flask.type === "water"
+                    ? " "
+                    : getSolutionType(solutionContext.flask.type) === "acid"
                     ? "Basicity = "
                     : getSolutionType(solutionContext.flask.type) === "base"
                     ? "Acidity = "
@@ -117,16 +123,18 @@ export default function GraphPanel({
 
             <hr className="rounded opacity-10 my-1" />
 
-            <div className="text-[0.7rem] leading-[1.2]">
-              <span className="text-white/60">{"c = "}</span>
-              <span className="text-white/80 font-medium">
-                {solutionContext.flask.content?.concentration || "-"}
-                <span className="text-[0.65rem]">
-                  &nbsp;mol&nbsp;dm
-                  <span className="sup !text-[0.5rem]">-3</span>
+            {solutionContext.flask.type !== "water" && (
+              <div className="text-[0.7rem] leading-[1.2]">
+                <span className="text-white/60">{"c = "}</span>
+                <span className="text-white/80 font-medium">
+                  {solutionContext.flask.content?.concentration || "-"}
+                  <span className="text-[0.65rem]">
+                    &nbsp;mol&nbsp;dm
+                    <span className="sup !text-[0.5rem]">-3</span>
+                  </span>
                 </span>
-              </span>
-            </div>
+              </div>
+            )}
 
             <div className="text-[0.7rem] leading-[1.2]">
               <span className="text-white/60">{"v = "}</span>
@@ -167,7 +175,9 @@ export default function GraphPanel({
             <div className="w-full flex justify-between items-center">
               <div className="">
                 <div className="text-sm font-medium leading-[1.1]">
-                  {solutionContext.burette.content?.label || "-"}
+                  {solutionContext.burette.type === "water"
+                    ? "Water"
+                    : solutionContext.burette.content?.label || "-"}
                 </div>
               </div>
               <div className="text-xs text-white/80">Burette</div>
@@ -175,11 +185,15 @@ export default function GraphPanel({
 
             <div className="flex justify-between items-center">
               <div className="text-[0.7rem] text-white/60">
-                {getSolutionTypeName(solutionContext.burette.type)}
+                {solutionContext.burette.type === "water"
+                  ? "H₂O"
+                  : getSolutionTypeName(solutionContext.burette.type)}
               </div>
               <div className="text-[0.7rem]">
                 <span className="text-white/60">
-                  {getSolutionType(solutionContext.burette.type) === "acid"
+                  {solutionContext.burette.type === "water"
+                    ? " "
+                    : getSolutionType(solutionContext.burette.type) === "acid"
                     ? "Basicity = "
                     : getSolutionType(solutionContext.burette.type) === "base"
                     ? "Acidity = "
@@ -197,34 +211,11 @@ export default function GraphPanel({
 
             <hr className="rounded opacity-10 my-1" />
 
-            <div className="text-[0.7rem] leading-[1.2]">
-              <span className="text-white/60">{"c = "}</span>
-              <span className="text-white/80 font-medium">
-                {solutionContext.burette.content?.concentration || "-"}
-                <span className="text-[0.65rem]">
-                  &nbsp;mol&nbsp;dm
-                  <span className="sup !text-[0.5rem]">-3</span>
-                </span>
-              </span>
-            </div>
-
-            {getSolutionStrength(solutionContext.burette.type) === "weak" && (
+            {solutionContext.burette.type !== "water" && (
               <div className="text-[0.7rem] leading-[1.2]">
-                <span className="text-white/60">
-                  k
-                  <span className="sub !text-[0.6rem]">
-                    {getSolutionType(solutionContext.burette.type) === "acid"
-                      ? "a"
-                      : "b"}
-                  </span>
-                  {" = "}
-                </span>
+                <span className="text-white/60">{"c = "}</span>
                 <span className="text-white/80 font-medium">
-                  {getSolutionType(solutionContext.burette.type) === "acid"
-                    ? (solutionContext.burette.content as Acid)?.Ka || "-"
-                    : getSolutionType(solutionContext.burette.type) === "base"
-                    ? (solutionContext.burette.content as Base)?.Kb || "-"
-                    : "-"}
+                  {solutionContext.burette.content?.concentration || "-"}
                   <span className="text-[0.65rem]">
                     &nbsp;mol&nbsp;dm
                     <span className="sup !text-[0.5rem]">-3</span>

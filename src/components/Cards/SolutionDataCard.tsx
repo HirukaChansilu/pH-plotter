@@ -7,10 +7,11 @@ import {
 } from "react";
 
 import { SolutionContext } from "../../context/SolutionContext";
-import { Acid, Base, Pages, Solutions } from "../../lib/types";
+import { Acid, Base, Pages } from "../../lib/types";
 
 import Card from "../UI/Card";
 import InputField, { NumberArrayInputField } from "../UI/InputField";
+import { getSolutionTypeName } from "../../lib/func";
 
 export default function SolutionDataCard({
   page,
@@ -110,36 +111,25 @@ export default function SolutionDataCard({
           }`}
         >
           <div className="text-lg font-medium">
-            {((type: Solutions | null) => {
-              switch (type) {
-                case "strong-acid":
-                  return "Strong Acid";
-                case "weak-acid":
-                  return "Weak Acid";
-                case "strong-base":
-                  return "Strong Base";
-                case "weak-base":
-                  return "Weak Base";
-                default:
-                  return "";
-              }
-            })(solutionContext[page].type)}
+            {getSolutionTypeName(solutionContext[page].type)}
           </div>
 
           <hr className="rounded opacity-10 my-1" />
 
           <div className="flex flex-col gap-1 h-full">
-            <InputField<string>
-              value={solution?.label || ""}
-              setValue={(value: string) =>
-                setSolution((preVal) => {
-                  return { ...preVal, label: value } as Acid | Base;
-                })
-              }
-              label="Label"
-              placeholder="Enter the name of the solution"
-              type="text"
-            />
+            {solutionContext[page].type !== "water" && (
+              <InputField<string>
+                value={solution?.label || ""}
+                setValue={(value: string) =>
+                  setSolution((preVal) => {
+                    return { ...preVal, label: value } as Acid | Base;
+                  })
+                }
+                label="Label"
+                placeholder="Enter the name of the solution"
+                type="text"
+              />
+            )}
 
             {solutionContext[page].type === "weak-acid" && (
               <InputField<number>
@@ -168,18 +158,19 @@ export default function SolutionDataCard({
                 type="number"
               />
             )}
-
-            <InputField<number>
-              value={solution?.concentration || ""}
-              setValue={(value: number) => {
-                setSolution((preVal) => {
-                  return { ...preVal, concentration: value } as Acid | Base;
-                });
-              }}
-              label="Concentration ( mol dm⁻³ )"
-              placeholder={"Enter the concentration"}
-              type="number"
-            />
+            {solutionContext[page].type !== "water" && (
+              <InputField<number>
+                value={solution?.concentration || ""}
+                setValue={(value: number) => {
+                  setSolution((preVal) => {
+                    return { ...preVal, concentration: value } as Acid | Base;
+                  });
+                }}
+                label="Concentration ( mol dm⁻³ )"
+                placeholder={"Enter the concentration"}
+                type="number"
+              />
+            )}
 
             {(solutionContext[page].type === "strong-acid" ||
               solutionContext[page].type === "weak-acid") && (
