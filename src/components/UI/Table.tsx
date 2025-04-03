@@ -1,14 +1,23 @@
 import Card from "./Card";
 
-export default function Table({ data }: { data: number[][] }) {
+export default function Table({
+  data,
+  className,
+}: {
+  data: number[][];
+
+  className?: string;
+}) {
   return (
-    <Card className="overflow-y-scroll h-32 w-full lg:w-32 lg:h-full">
+    <Card
+      className={`overflow-y-auto h-32 w-full lg:w-32 lg:h-full ${className}`}
+    >
       <div className="absolute top-0 right-0 left-0 w-full p-1">
         <table className="w-full">
           <thead>
             <tr className="border-b-2 border-white/50">
-              <th className="text-[0.6rem] text-white/80">Volume</th>
-              <th className="text-[0.6rem] text-white/80 border-l-2 border-white/20">
+              <th className="text-[0.6rem] text-white/80 w-1/2">Volume</th>
+              <th className="text-[0.6rem] text-white/80 w-1/2 border-l-2 border-white/20">
                 pH
               </th>
             </tr>

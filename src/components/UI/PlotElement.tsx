@@ -36,13 +36,13 @@ export default function PlotElement({ data, ...props }: PlotElementProps) {
           settingsContext.settings.volumeUnit === "cm3" ? "cm³" : "dm³"
         } )`,
         labelAnchor: "right",
-        labelOffset: 25,
+        labelOffset: 28,
         line: true,
       },
       y: {
         label: "pH",
         labelAnchor: "top",
-        labelOffset: 26,
+        labelOffset: 28,
         line: true,
         domain: [0, 14],
       },

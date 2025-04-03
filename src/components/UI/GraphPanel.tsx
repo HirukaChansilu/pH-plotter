@@ -69,7 +69,7 @@ export default function GraphPanel({
       }}
     >
       <Card
-        className="w-full h-11/12 !py-0 !pb-3 !px-3 rounded-b-none xl:rounded-b-2xl rounded-t-2xl flex flex-col transition-transform duration-500 ease-in-out"
+        className="w-full h-11/12 !py-0 !pb-3 !px-3 rounded-b-none xl:rounded-b-2xl rounded-t-2xl flex flex-col transition-transform duration-500 ease-in-out relative"
         onClick={(e) => {
           e.stopPropagation();
         }}
@@ -226,13 +226,42 @@ export default function GraphPanel({
           </Card>
         </div>
 
-        <div className="w-full h-full flex flex-col lg:flex-row gap-1">
-          <Table data={data} />
+        <div className="w-full h-full flex flex-col lg:flex-row gap-1 relative">
+          <Table
+            data={data.length > 0 ? data : [[0, 0]]}
+            className={`transition-all duration-500 ease-in-out ${
+              data.length > 0 ? "opacity-100 blur-none" : "opacity-40 blur-xs"
+            }`}
+          />
           <div className="w-full h-full relative overflow-x-scroll flex gap-1 items-start justify-start">
             <PlotElement
-              data={data}
-              className="absolute top-0 bottom-0 left-0 h-full aspect-[2/1]"
+              data={
+                data.length > 0
+                  ? data
+                  : [
+                      [0, 0],
+                      [1, 1],
+                      [2, 7],
+                      [3, 8],
+                      [4, 14],
+                    ]
+              }
+              className={`absolute top-0 bottom-0 left-0 h-full aspect-[2/1] transition-all duration-500 ease-in-out ${
+                data.length > 0 ? "opacity-100 blur-none" : "opacity-40 blur-xs"
+              }`}
             />
+          </div>
+
+          <div
+            className={`flex flex-col items-center justify-center absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out pointer-events-none ${
+              data.length > 0 ? "opacity-0" : "opacity-80"
+            }`}
+          >
+            <div className="material-symbols-rounded !text-3xl">timeline</div>
+            <div className="text-center text-xs leading-3.5">
+              Need to add more data to the flask <br />
+              and burette to see the graph
+            </div>
           </div>
         </div>
       </Card>

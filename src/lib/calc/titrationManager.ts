@@ -9,26 +9,33 @@ function getPHValue(
   buretteVolume: number,
   settings: Settings
 ): number {
-  const buretteVolumeConverted = convertVolumeUnits(settings, buretteVolume);
-  const flaskVolumeConverted = convertVolumeUnits(settings, flask.volume || 0);
+  if (!flask.volume) return 0;
+
+  // Water - Water Fallback
+
+  if (flask.type === "water" && burette.type === "water") {
+    const pH = -Math.log10(Math.sqrt(settings.kw));
+
+    return Math.abs(Math.round(pH * 100) / 100);
+  }
 
   // Strong Acid with Water
 
   if (flask.type === "water" && burette.type === "strong-acid") {
     return WaterStrongAcid(
-      flaskVolumeConverted,
+      flask.volume,
       {
         ...burette.content,
-        volume: buretteVolumeConverted,
+        volume: buretteVolume,
       } as Acid,
       settings.kw
     );
   } else if (flask.type === "strong-acid" && burette.type === "water") {
     return WaterStrongAcid(
-      buretteVolumeConverted,
+      buretteVolume,
       {
         ...flask.content,
-        volume: flaskVolumeConverted,
+        volume: flask.volume,
       } as Acid,
       settings.kw
     );
@@ -37,19 +44,19 @@ function getPHValue(
 
   if (flask.type === "water" && burette.type === "strong-base") {
     return WaterStrongBase(
-      flaskVolumeConverted,
+      flask.volume,
       {
         ...burette.content,
-        volume: buretteVolumeConverted,
+        volume: buretteVolume,
       } as Acid,
       settings.kw
     );
   } else if (flask.type === "strong-base" && burette.type === "water") {
     return WaterStrongBase(
-      buretteVolumeConverted,
+      buretteVolume,
       {
         ...flask.content,
-        volume: flaskVolumeConverted,
+        volume: flask.volume,
       } as Acid,
       settings.kw
     );
@@ -63,13 +70,13 @@ function getPHValue(
   ) {
     return flask.type === "strong-acid"
       ? calculatePHStrongAcidStrongBase(
-          { ...flask.content, volume: flaskVolumeConverted } as Acid,
-          { ...burette.content, volume: buretteVolumeConverted } as Base,
+          { ...flask.content, volume: flask.volume } as Acid,
+          { ...burette.content, volume: buretteVolume } as Base,
           settings.kw
         )
       : calculatePHStrongAcidStrongBase(
-          { ...burette.content, volume: buretteVolumeConverted } as Acid,
-          { ...flask.content, volume: flaskVolumeConverted } as Base,
+          { ...burette.content, volume: buretteVolume } as Acid,
+          { ...flask.content, volume: flask.volume } as Base,
           settings.kw
         );
   }
@@ -90,6 +97,20 @@ export function getGraphData(
     return [];
 
   return burette.volumePoints.map((buretteVolume) => {
-    return [buretteVolume, getPHValue(flask, burette, buretteVolume, settings)];
+    const buretteVolumeConverted = convertVolumeUnits(settings, buretteVolume);
+    const flaskVolumeConverted = convertVolumeUnits(
+      settings,
+      flask.volume || 0
+    );
+
+    return [
+      buretteVolume,
+      getPHValue(
+        { ...flask, volume: flaskVolumeConverted },
+        burette,
+        buretteVolumeConverted,
+        settings
+      ),
+    ];
   });
 }

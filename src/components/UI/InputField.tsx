@@ -66,7 +66,7 @@ export function NumberArrayInputField({
         {label}
       </div>
 
-      <div className="w-full min-h-8 py-1 px-2 rounded-lg bg-white/[0.05] backdrop-blur-xl border-[2px] border-white/5 focus:outline-none focus:border-cyan-900 text-sm text-white/60 flex-col items-center justify-start overflow-y-scroll max-h-40">
+      <div className="w-full min-h-8 py-1 px-2 rounded-lg bg-white/[0.05] backdrop-blur-xl border-[2px] border-white/5 focus:outline-none focus:border-cyan-900 text-sm text-white/60 flex-col items-center justify-start overflow-y-auto max-h-40">
         <div className="flex items-center justify-start gap-1 w-full flex-wrap">
           {Array.isArray(numbers) &&
             numbers.map((num, index) => (
