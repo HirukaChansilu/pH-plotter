@@ -15,7 +15,6 @@ interface SettingsContextProps {
 
 const initialSettings: Settings = {
   kw: 1e-14,
-  concentrationUnit: "moldm-3",
   volumeUnit: "cm3",
 };
 

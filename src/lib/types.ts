@@ -1,6 +1,5 @@
 export interface Settings {
   kw: number;
-  concentrationUnit: "moldm-3";
   volumeUnit: "cm3" | "dm3";
 }
 

@@ -12,12 +12,12 @@ import { SettingsContext } from "../../context/SettingsContext";
 import { useSwipe } from "../../hooks/useSwipe";
 
 import {
-  getGraphData,
   getSolutionStrength,
   getSolutionType,
   getSolutionTypeName,
 } from "../../lib/func";
 import { Acid, Base } from "../../lib/types";
+import { getGraphData } from "../../lib/calc/titrationManager";
 
 import Card from "./Card";
 import PlotElement from "./PlotElement";
@@ -44,7 +44,7 @@ export default function GraphPanel({
       getGraphData(
         solutionContext.flask,
         solutionContext.burette,
-        settingsContext.settings.kw
+        settingsContext.settings
       ) || []
     );
   }, [solutionContext, settingsContext]);

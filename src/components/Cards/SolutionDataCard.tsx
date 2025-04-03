@@ -7,6 +7,7 @@ import {
 } from "react";
 
 import { SolutionContext } from "../../context/SolutionContext";
+import { SettingsContext } from "../../context/SettingsContext";
 import { Acid, Base, Pages } from "../../lib/types";
 
 import Card from "../UI/Card";
@@ -21,6 +22,7 @@ export default function SolutionDataCard({
   className?: string;
 }) {
   const solutionContext = useContext(SolutionContext);
+  const settingsContext = useContext(SettingsContext);
 
   const [solution, setSolution] = useState<
     Partial<Acid> | Partial<Base> | null
@@ -136,7 +138,7 @@ export default function SolutionDataCard({
                 value={(solution as Acid)?.Ka || ""}
                 setValue={(value: number) =>
                   setSolution((preVal) => {
-                    return { ...preVal, Ka: value } as Acid;
+                    return { ...preVal, Ka: Number(value) } as Acid;
                   })
                 }
                 label="Ka"
@@ -150,7 +152,7 @@ export default function SolutionDataCard({
                 value={(solution as Base)?.Kb || ""}
                 setValue={(value: number) =>
                   setSolution((preVal) => {
-                    return { ...preVal, Kb: value } as Base;
+                    return { ...preVal, Kb: Number(value) } as Base;
                   })
                 }
                 label="Kb"
@@ -163,7 +165,9 @@ export default function SolutionDataCard({
                 value={solution?.concentration || ""}
                 setValue={(value: number) => {
                   setSolution((preVal) => {
-                    return { ...preVal, concentration: value } as Acid | Base;
+                    return { ...preVal, concentration: Number(value) } as
+                      | Acid
+                      | Base;
                   });
                 }}
                 label="Concentration ( mol dm⁻³ )"
@@ -178,7 +182,7 @@ export default function SolutionDataCard({
                 value={(solution as Acid)?.basicity || ""}
                 setValue={(value: number) =>
                   setSolution((preVal) => {
-                    return { ...preVal, basicity: value } as Acid;
+                    return { ...preVal, basicity: Number(value) } as Acid;
                   })
                 }
                 label="Basicity"
@@ -193,7 +197,7 @@ export default function SolutionDataCard({
                 value={(solution as Base)?.acidity || ""}
                 setValue={(value: number) =>
                   setSolution((preVal) => {
-                    return { ...preVal, acidity: value } as Base;
+                    return { ...preVal, acidity: Number(value) } as Base;
                   })
                 }
                 label="Acidity"
@@ -205,8 +209,10 @@ export default function SolutionDataCard({
             {page === "flask" && (
               <InputField<number>
                 value={(volumePoints as number) || ""}
-                setValue={setVolumePoints}
-                label="Volume ( cm³ )"
+                setValue={(value: number) => setVolumePoints(Number(value))}
+                label={`Volume ( ${
+                  settingsContext.settings.volumeUnit === "cm3" ? "cm³" : "dm³"
+                } )`}
                 placeholder="Enter the volume"
                 type="number"
               />
@@ -218,7 +224,9 @@ export default function SolutionDataCard({
                 setNumbers={
                   setVolumePoints as Dispatch<SetStateAction<number[]>>
                 }
-                label="Volume Points ( cm³ )"
+                label={`Volume Points ( ${
+                  settingsContext.settings.volumeUnit === "cm3" ? "cm³" : "dm³"
+                } )`}
                 placeholder="Enter the volume points"
               />
             )}

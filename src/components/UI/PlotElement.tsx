@@ -1,11 +1,14 @@
-import { HTMLAttributes, useEffect, useRef } from "react";
+import { HTMLAttributes, useContext, useEffect, useRef } from "react";
 import * as Plot from "@observablehq/plot";
+import { SettingsContext } from "../../context/SettingsContext";
 
 interface PlotElementProps extends HTMLAttributes<HTMLDivElement> {
   data: number[][];
 }
 
 export default function PlotElement({ data, ...props }: PlotElementProps) {
+  const settingsContext = useContext(SettingsContext);
+
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -14,9 +17,14 @@ export default function PlotElement({ data, ...props }: PlotElementProps) {
     const plotLocal = Plot.plot({
       marks: [
         Plot.line(data, {
-          curve: "catmull-rom",
+          curve: "monotone-x",
         }),
         Plot.dot(data),
+        Plot.ruleY([0], { stroke: "black", strokeWidth: 1 }),
+        Plot.ruleX([0], {
+          stroke: "black",
+          strokeWidth: 1,
+        }),
       ],
       width: 1000,
       height: 500,
@@ -24,7 +32,9 @@ export default function PlotElement({ data, ...props }: PlotElementProps) {
         fontFamily: "Satoshi, Arial, sans-serif",
       },
       x: {
-        label: "Volume (cm³)",
+        label: `Volume ( ${
+          settingsContext.settings.volumeUnit === "cm3" ? "cm³" : "dm³"
+        } )`,
         labelAnchor: "right",
         labelOffset: 25,
         line: true,
@@ -32,15 +42,16 @@ export default function PlotElement({ data, ...props }: PlotElementProps) {
       y: {
         label: "pH",
         labelAnchor: "top",
-        labelOffset: 25,
+        labelOffset: 26,
         line: true,
+        domain: [0, 14],
       },
       grid: true,
     });
 
     (containerRef.current as HTMLDivElement).append(plotLocal);
     return () => plotLocal.remove();
-  }, [containerRef, data]);
+  }, [containerRef, data, settingsContext.settings.volumeUnit]);
 
   return (
     <div
