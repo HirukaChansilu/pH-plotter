@@ -83,7 +83,7 @@ export function NumberArrayInputField({
             ))}
 
           <input
-            type="text"
+            type="number"
             value={inputValue}
             onChange={(e) => {
               if (/^[0-9.,]*$/.test(e.target.value)) {

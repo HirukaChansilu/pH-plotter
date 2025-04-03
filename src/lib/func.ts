@@ -1,6 +1,11 @@
-import { calculatePHStrongAcidStrongBase } from "./calc/StrongAcidStrongBase";
+import { Settings, Solutions } from "./types";
 
-import { Acid, Base, Burette, Flask, Solutions } from "./types";
+export function convertVolumeUnits(settings: Settings, volume: number) {
+  if (settings.volumeUnit === "cm3") {
+    return volume / 1000;
+  }
+  return volume;
+}
 
 export function getSolutionTypeName(type: Solutions | null) {
   switch (type) {
@@ -12,6 +17,8 @@ export function getSolutionTypeName(type: Solutions | null) {
       return "Strong Base";
     case "weak-base":
       return "Weak Base";
+    case "water":
+      return "Water";
     default:
       return "-";
   }
@@ -44,34 +51,5 @@ export function getSolutionStrength(type: Solutions | null) {
       return "weak";
     default:
       return "";
-  }
-}
-
-export function getGraphData(flask: Flask, burette: Burette, kw: number) {
-  if (!burette.volumePoints || !flask.content || !burette.content) return [];
-
-  // Strong Acid - Strong Base
-  if (
-    (flask.type === "strong-acid" && burette.type === "strong-base") ||
-    (flask.type === "strong-base" && burette.type === "strong-acid")
-  ) {
-    return burette.volumePoints.map((volume) => {
-      return [
-        volume,
-        flask.type === "strong-acid"
-          ? calculatePHStrongAcidStrongBase(
-              { ...flask.content, volume: (flask.volume || 0) / 1000 } as Acid,
-              { ...burette.content, volume: volume / 1000 } as Base,
-              kw,
-              true
-            )
-          : calculatePHStrongAcidStrongBase(
-              { ...burette.content, volume: volume / 1000 } as Acid,
-              { ...flask.content, volume: (flask.volume || 0) / 1000 } as Base,
-              kw,
-              true
-            ),
-      ];
-    });
   }
 }

@@ -59,6 +59,10 @@ export function SelectionCard({ page }: { page: Pages }) {
           setValue={setValue}
           options={[
             {
+              label: "Water",
+              value: "water",
+            },
+            {
               label: "Strong Acid",
               value: "strong-acid",
             },
