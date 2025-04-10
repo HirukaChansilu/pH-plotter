@@ -69,7 +69,6 @@ export function SelectionCard({ page }: { page: Pages }) {
             {
               label: "Weak Acid",
               value: "weak-acid",
-              disabled: true,
             },
             {
               label: "Strong Base",

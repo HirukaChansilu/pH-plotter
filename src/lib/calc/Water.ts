@@ -41,3 +41,28 @@ export function WaterStrongBase(
 
   return Math.abs(Math.round((14 - pOH) * 100) / 100);
 }
+
+export function WaterWeakAcidMonoBasic(
+  volume: number,
+  acid: Acid,
+  kw: number
+): number {
+  if (!acid.Ka) {
+    console.error("Ka value is required for weak acid calculations.");
+    return 0;
+  }
+
+  // Calculate concentration of HA
+  const concentrationHA =
+    (acid.concentration * acid.volume) / (volume + acid.volume);
+
+  const hPlusConcentration =
+    (Math.sqrt(kw) +
+      Math.sqrt((Math.sqrt(kw) + acid.Ka) ** 2 + 4 * kw * concentrationHA) -
+      acid.Ka) /
+    2;
+
+  const pH = -Math.log10(hPlusConcentration);
+
+  return Math.abs(Math.round(pH * 100) / 100);
+}

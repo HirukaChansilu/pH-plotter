@@ -1,7 +1,11 @@
 import { convertVolumeUnits } from "../func";
 import { Acid, Base, Burette, Flask, Settings } from "../types";
 import { calculatePHStrongAcidStrongBase } from "./StrongAcidStrongBase";
-import { WaterStrongAcid, WaterStrongBase } from "./Water";
+import {
+  WaterStrongAcid,
+  WaterStrongBase,
+  WaterWeakAcidMonoBasic,
+} from "./Water";
 
 function getPHValue(
   flask: Flask,
@@ -53,6 +57,28 @@ function getPHValue(
     );
   } else if (flask.type === "strong-base" && burette.type === "water") {
     return WaterStrongBase(
+      buretteVolume,
+      {
+        ...flask.content,
+        volume: flask.volume,
+      } as Acid,
+      settings.kw
+    );
+  }
+
+  // Weak Acid with Water
+
+  if (flask.type === "water" && burette.type === "weak-acid") {
+    return WaterWeakAcidMonoBasic(
+      flask.volume,
+      {
+        ...burette.content,
+        volume: buretteVolume,
+      } as Acid,
+      settings.kw
+    );
+  } else if (flask.type === "weak-acid" && burette.type === "water") {
+    return WaterWeakAcidMonoBasic(
       buretteVolume,
       {
         ...flask.content,
